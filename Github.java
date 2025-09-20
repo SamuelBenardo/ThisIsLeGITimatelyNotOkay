@@ -10,27 +10,20 @@ public class Github {
     public static void initializeDirs() throws IOException {
 
         // File names
-        String git = "./git";
-        String[] files = new String[]{"/objects", "/index", "/HEAD"};
+        File[] files = createDirList();
         boolean isCreated = false;
 
-        File dir = new File(git);
-
-        if (!dir.exists()) {
-            dir.mkdir();
+        if (!files[0].exists()) {
+            files[0].mkdir();
             isCreated = true;
+        }
 
-            // Cycles through list and turns strings into files (if they do not exist).
-            for (int i = 0; i < files.length; i++) {
-
-                files[i] = git + files[i];
-                File f = new File(files[i]);
-
-                if (!f.exists()) {
-                    f.createNewFile();
-                } else {
-                    isCreated = false;
-                }
+        // Cycles through list and turns strings into files (if they do not exist).
+        for (int i = 1; i < files.length; i++) {
+            if (!files[i].exists()) {
+                files[i].createNewFile();
+            } else {
+                isCreated = false;
             }
         }
 
@@ -43,14 +36,17 @@ public class Github {
 
     }
 
-    // makes a directory based on file name. Returns true if created, false if not.
-    public static boolean createDir(String name) {
-        File dir = new File(name);
-        if (!dir.exists()) {
-            dir.mkdir();
-            return true;
-        } 
-        return false;
+    public static File[] createDirList() {
+        String dir = "./git";
+        String[] subFiles = new String[]{"", "/objects", "/index", "/HEAD"};
+        File[] files = new File[4];
+
+        for (int i = 0; i < 4; i++) {
+            subFiles[i] = dir + subFiles[i];
+            files[i] = new File(subFiles[i]);
+        }
+
+        return files;
     }
 
 
