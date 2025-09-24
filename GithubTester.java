@@ -8,6 +8,10 @@ public class GithubTester {
     }
 
 
+<<<<<<< HEAD
+=======
+    // tests if the directory exists
+>>>>>>> fixedgitDirectory
     public static boolean testDirExistence() {
         File[] files = createDirList();
         boolean[] doesExist = new boolean[4];
@@ -24,6 +28,10 @@ public class GithubTester {
         return conclusion;
     }
 
+<<<<<<< HEAD
+=======
+    // resets all directories
+>>>>>>> fixedgitDirectory
     public static void resetDirectories() {
         File dir = new File("./git");
         if (dir.exists()) {
@@ -35,6 +43,10 @@ public class GithubTester {
         }
     }
 
+<<<<<<< HEAD
+=======
+    // recursively deletes files
+>>>>>>> fixedgitDirectory
     public static void deleteAllFiles(File dir) {
         File[] files = dir.listFiles();
         for (int i = 0; i < files.length; i++) {
