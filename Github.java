@@ -17,8 +17,6 @@ public class Github {
         initializeDirs();
     }
 
-
-
     // Creates the directories required for the github
     public static void initializeDirs() throws IOException {
 
@@ -69,8 +67,6 @@ public class Github {
         return files;
     }
 
-
-
     // takes a file and maps it to a SHA1 file in the object dir
     public static void createBLOBfile(File f) {
         String dir = "./git/objects/";
@@ -85,7 +81,7 @@ public class Github {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        } 
+        }
 
     }
 
@@ -101,7 +97,7 @@ public class Github {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        
+
     }
 
     // checks if empty, WILL NOT WORK FOR ENCODED -- i don't think
@@ -131,8 +127,6 @@ public class Github {
             return "";
         }
     }
-
-
 
     // hashes the given contents into sha-1
     public static String hashFile(String contents) {
@@ -164,13 +158,14 @@ public class Github {
 
     public static void updateIndex(String sha1, String fileName) throws FileNotFoundException {
         File index = new File("./git/index");
-        String toWrite = sha1 + " " + fileName;
+        String toWrite = sha1 + " " + (new File(fileName)).getPath();
         fileWriter(toWrite, index);
     }
-       
+
 }
 
-/* QUESTIONS
+/*
+ * QUESTIONS
  * Do you have to close BW?? need while loop??/
  * Errors anything special???
  * do ik if filename already .txt??
