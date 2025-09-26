@@ -1,5 +1,9 @@
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.io.Serializable;
 
 public class GithubTester {
     public static void main(String[] args) {
@@ -72,7 +76,6 @@ public class GithubTester {
 
 
 
-
     // BLOB
 
     // creates a blob using file data input, returns true if worked and false if not. resets Blob file after.
@@ -117,6 +120,72 @@ public class GithubTester {
         if (objs.exists()) {
             deleteAllFiles(objs);
         }
+    }
+
+
+    // INDEX
+
+    // creates 4 files & checks if the blobbing works correctly and the indexing works (using the noncompressed version of SHA1)
+    public static void testIndexing() throws IOException {
+
+        // creating test files
+        String dir = "./git/";
+        String[] files = new String[]{"f1.txt", "f2.txt", "f3.txt", "f4.txt"};
+        String[] contents = new String[]{"eeny", "meeny", "miny", "moe"};
+        String[] sha1 = new String[]{"4140d3efad5acc01cc34b58ee88fc6c21568262d", "42a9a4ef58698cb708e9fefba06bd49ad02e05e1", "03516b717bbb8ca16a73ec06f236d0bc7d4120cb", "63e885ca488b7659504b5878d017e2a196f4475e"};
+
+        for (int i = 0; i < 4; i++) {
+            File f = new File(dir + files[i]);
+            Github.fileWriter(contents[i], f);
+            Github.createBLOBfile(f);
+            Github.updateIndex(Github.hashFile(contents[i]), files[i]);
+        }
+
+        // checking validity
+        dir = "./git/objects/";
+        System.out.println("Was correct SHA-1 file blobbed in objects?");
+        for (int i = 0; i < 4; i++) {
+            System.out.println(files[i] + ": " + (new File(dir + "" + sha1[i])).exists());
+        }
+
+        System.out.println();
+        System.out.println("Was index updated correctly?");
+        BufferedReader br = new BufferedReader(new FileReader(new File("./git/index")));
+        while (br.ready()) {
+            for (int i = 0; i < 4; i++) {
+                String index = br.readLine();
+                String fileName = index.substring((index.length() - 7));
+                String hash = index.substring(0, index.length() - 6);
+                System.out.println(files[i] + ":");
+                System.out.println("SHA-1: " + hash.equals(sha1[i]));
+                System.out.println("File Name: " + fileName.equals(files[i]));
+                System.out.println();
+            }
+        }
+        br.close();
+
+
+    }
+
+    // deletes non-essential files in git folder (not within objs)
+    public static void deleteTestFiles() {
+        String dir = "./git";
+        ArrayList<String> basicGitDirs = new ArrayList<>(3);
+        basicGitDirs.add("objects");
+        basicGitDirs.add("HEAD");
+        basicGitDirs.add("index");
+        String[] currentFiles = (new File(dir)).list();
+
+        for (String file : currentFiles) {
+            if (!basicGitDirs.contains(file)) {
+                (new File(dir + "/" + file)).delete();
+            }
+        }
+    }
+
+    public static void resetToMyStandardsAKABareMinimum() {
+        resetBlob();
+        deleteTestFiles();
     }
 
 }

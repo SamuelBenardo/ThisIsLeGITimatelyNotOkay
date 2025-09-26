@@ -1,12 +1,17 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Formatter;
+
 public class Github {
     public static boolean isCompressed;
 
@@ -82,10 +87,13 @@ public class Github {
 
     }
 
-    private static void transferContents(String contents, File nFile) {
+    public static void fileWriter(String toWrite, File f) {
         try {
-            BufferedWriter bw = new BufferedWriter(new FileWriter(nFile));
-            bw.write(contents);
+            BufferedWriter bw = new BufferedWriter(new FileWriter(f));
+            if (!isEmpty(f)) {
+                bw.newLine();
+            }
+            bw.write(toWrite);
             bw.close();
 
         } catch (IOException e) {
@@ -94,8 +102,19 @@ public class Github {
 
     }
 
+    // checks if empty, WILL NOT WORK FOR ENCODED -- i don't think
+    public static boolean isEmpty(File f) throws IOException {
+        BufferedReader bw = new BufferedReader(new FileReader(f));
+        if (bw.readLine() == null) {
+            bw.close();
+            return true;
+        }
+        bw.close();
+        return false;
+    }
+
     // reads the file contents and returns as a string
-    public static String readFileContent(File f) {
+    public static String readFile(File f) {
         StringBuilder sb = new StringBuilder();
         try {
             BufferedReader br = new BufferedReader(new FileReader(f));
@@ -103,9 +122,6 @@ public class Github {
                 sb.append(br.readLine());
             }
             br.close();
-            if (isCompressed) {
-                return compress(sb.toString());
-            }
             return sb.toString();
 
         } catch (IOException e) {
@@ -154,4 +170,11 @@ public class Github {
         gzip.close();
         return out.toString("ISO-8859-1");
     }
+
+    public static void updateIndex(String sha1, String fileName) throws FileNotFoundException {
+        File index = new File("./git/index");
+        String toWrite = sha1 + " " + (new File(fileName)).getPath();
+        fileWriter(toWrite, index);
+    }
+
 }
