@@ -1,18 +1,24 @@
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Formatter;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 public class Github {
+    public static boolean isCompressed;
+
     public static void main(String[] args) throws IOException {
-        
+
     }
 
     // Creates the directories required for the github
@@ -79,7 +85,7 @@ public class Github {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        } 
+        }
 
     }
 
@@ -92,7 +98,7 @@ public class Github {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        
+
     }
 
     // reads the file contents and returns as a string
@@ -104,6 +110,9 @@ public class Github {
                 sb.append(br.readLine());
             }
             br.close();
+            if (isCompressed) {
+                return compress(sb.toString());
+            }
             return sb.toString();
 
         } catch (IOException e) {
@@ -139,9 +148,48 @@ public class Github {
         formatter.close();
         return result;
     }
+
+    // compresses given string
+    public static String compress(String str) throws IOException {
+        if (str == null || str.length() == 0) {
+            return str;
+        }
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        GZIPOutputStream gzip = new GZIPOutputStream(out);
+        gzip.write(str.getBytes());
+        gzip.close();
+        return out.toString("ISO-8859-1");
+    }
+
+    // public static String decompress(String str) {
+    // if (str == null || str.length() == 0) {
+    // return str;
+    // }
+
+    // try {
+    // String decode = URLDecoder.decode(str, "UTF-8");
+
+    // ByteArrayOutputStream out = new ByteArrayOutputStream();
+    // ByteArrayInputStream in = new
+    // ByteArrayInputStream(decode.getBytes("ISO-8859-1"));
+    // GZIPInputStream gunzip = new GZIPInputStream(in);
+    // byte[] buffer = new byte[256];
+    // int n;
+    // while ((n = gunzip.read(buffer)) >= 0) {
+    // out.write(buffer, 0, n);
+    // }
+    // return out.toString("ISO-8859-1");
+    // } catch (IOException e) {
+    // e.printStackTrace();
+    // }
+    // return null;
+    // }
+
 }
 
-/* QUESTIONS
+/*
+ * QUESTIONS
  * Do you have to close BW?? need while loop??/
  * Errors anything special???
  * 
