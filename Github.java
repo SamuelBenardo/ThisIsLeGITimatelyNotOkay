@@ -54,7 +54,7 @@ public class Github {
     }
 
     // initializes a list of all files to be created
-    private static File[] createDirList() {
+    public static File[] createDirList() {
         String dir = "./git";
         String[] subFiles = new String[] { "", "/objects", "/index", "/HEAD" };
         File[] files = new File[4];
@@ -87,7 +87,7 @@ public class Github {
 
     }
 
-    private static void fileWriter(String toWrite, File f) {
+    public static void fileWriter(String toWrite, File f) {
         try {
             BufferedWriter bw = new BufferedWriter(new FileWriter(f));
             bw.write(toWrite);
