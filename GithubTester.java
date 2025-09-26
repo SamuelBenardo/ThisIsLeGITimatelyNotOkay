@@ -1,15 +1,14 @@
 import java.io.File;
+import java.io.IOException;
 
 public class GithubTester {
-    public static void main(String[] args) {
-        testDirExistence();
-        resetDirectories();
-        testDirExistence();
+    public static void main(String[] args) throws IOException {
+
     }
 
     // tests if the directory exists
     public static boolean testDirExistence() {
-        File[] files = createDirList();
+        File[] files = Github.createDirList();
         boolean[] doesExist = new boolean[4];
         boolean conclusion = true;
 
@@ -48,17 +47,52 @@ public class GithubTester {
         }
     }
 
-    public static File[] createDirList() {
-        String dir = "./git";
-        String[] subFiles = new String[] { "", "/objects", "/index", "/HEAD" };
-        File[] files = new File[4];
 
-        for (int i = 0; i < 4; i++) {
-            subFiles[i] = dir + subFiles[i];
-            files[i] = new File(subFiles[i]);
+
+    // BLOB
+
+    // creates a blob using file data input, returns true if worked and false if not. resets Blob file after.
+    public static boolean doesFileBLOB(File f) {
+        if (!f.exists() ) {
+            Github.createBLOBfile(f);
+
+            String dir = "./git/objects/";
+            String contents = Github.readFileContent(f);
+            String hash = Github.hashFile(contents);
+            File blob = new File(dir + hash);
+
+            if (blob.exists()) {
+                resetBlob();
+                return true;
+            } else {
+                resetBlob();
+                return false;
+            }
+        }
+        System.out.println("File already exists in Blob. Please reset.");
+        return false;
+
+    }  
+
+    public static void resetBlob() {
+
+        // reset index
+        File index = new File("./git/index");
+        if (index.exists()) {
+            if (index.delete()) {
+                try {
+                    index.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
 
-        return files;
+        // reset BLOB files
+        File objs = new File("./git/objects");
+        if (objs.exists()) {
+            deleteAllFiles(objs);
+        }
     }
 
 }

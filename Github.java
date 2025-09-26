@@ -12,7 +12,7 @@ import java.util.Formatter;
 
 public class Github {
     public static void main(String[] args) throws IOException {
-        initializeDirs();
+        
     }
 
     // Creates the directories required for the github
@@ -52,7 +52,7 @@ public class Github {
     }
 
     // initializes a list of all files to be created
-    private static File[] createDirList() {
+    public static File[] createDirList() {
         String dir = "./git";
         String[] subFiles = new String[] { "", "/objects", "/index", "/HEAD" };
         File[] files = new File[4];
