@@ -1,19 +1,18 @@
 import java.io.File;
+import java.io.IOException;
 
 public class GithubTester {
     public static void main(String[] args) {
-        testDirExistence();
-        resetDirectories();
-        testDirExistence();
+
     }
 
 
-<<<<<<< HEAD
-=======
+
+    // DIRECTORY TESTERS
+
     // tests if the directory exists
->>>>>>> fixedgitDirectory
     public static boolean testDirExistence() {
-        File[] files = createDirList();
+        File[] files = Github.createDirList();
         boolean[] doesExist = new boolean[4];
         boolean conclusion = true;
 
@@ -28,10 +27,7 @@ public class GithubTester {
         return conclusion;
     }
 
-<<<<<<< HEAD
-=======
     // resets all directories
->>>>>>> fixedgitDirectory
     public static void resetDirectories() {
         File dir = new File("./git");
         if (dir.exists()) {
@@ -43,10 +39,7 @@ public class GithubTester {
         }
     }
 
-<<<<<<< HEAD
-=======
     // recursively deletes files
->>>>>>> fixedgitDirectory
     public static void deleteAllFiles(File dir) {
         File[] files = dir.listFiles();
         for (int i = 0; i < files.length; i++) {
@@ -58,17 +51,22 @@ public class GithubTester {
         }
     }
 
-    public static File[] createDirList() {
-        String dir = "./git";
-        String[] subFiles = new String[]{"", "/objects", "/index", "/HEAD"};
-        File[] files = new File[4];
-
-        for (int i = 0; i < 4; i++) {
-            subFiles[i] = dir + subFiles[i];
-            files[i] = new File(subFiles[i]);
+    // creates and deletes ./git dirs the number of times indicated by the argument.
+    public static void dirTest(int numCycles) {
+        File git = new File("./git");
+        if (git.exists()) {
+            resetDirectories();
         }
 
-        return files;
+        for (int i = 0; i < numCycles; i++) {
+            try {
+                System.out.println("Trial " + (i + 1) + ": ");
+                Github.initializeDirs();
+                resetDirectories();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 }
