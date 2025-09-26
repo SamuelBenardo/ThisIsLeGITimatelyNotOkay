@@ -6,7 +6,8 @@ import java.util.ArrayList;
 
 public class GithubTester {
     public static void main(String[] args) throws IOException {
-        deleteTestFiles();
+        testIndexing();
+        resetToMyStandardsAKABareMinimum();
     }
 
     // tests if the directory exists
@@ -122,7 +123,7 @@ public class GithubTester {
         dir = "./git/objects/";
         System.out.println("Was correct SHA-1 file blobbed in objects?");
         for (int i = 0; i < 4; i++) {
-            System.out.println(files[i] + ": " + (new File(dir + sha1)).exists());
+            System.out.println(files[i] + ": " + (new File(dir + "" + sha1[i])).exists());
         }
 
         System.out.println();
@@ -135,7 +136,7 @@ public class GithubTester {
                 String hash = index.substring(0, index.length() - 6);
                 System.out.println(files[i] + ":");
                 System.out.println("SHA-1: " + hash.equals(sha1[i]));
-                System.out.println("File name " + fileName.equals(files[i]));
+                System.out.println("File Name: " + fileName.equals(files[i]));
                 System.out.println();
             }
         }
