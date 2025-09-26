@@ -1,10 +1,12 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -90,6 +92,9 @@ public class Github {
     public static void fileWriter(String toWrite, File f) {
         try {
             BufferedWriter bw = new BufferedWriter(new FileWriter(f));
+            if (!isEmpty(f)) {
+                bw.newLine();
+            }
             bw.write(toWrite);
             bw.close();
 
@@ -97,6 +102,17 @@ public class Github {
             e.printStackTrace();
         }
         
+    }
+
+    // checks if empty, WILL NOT WORK FOR ENCODED -- i don't think
+    public static boolean isEmpty(File f) throws IOException {
+        BufferedReader bw = new BufferedReader(new FileReader(f));
+        if (bw.readLine() == null) {
+            bw.close();
+            return true;
+        }
+        bw.close();
+        return false;
     }
 
     // reads the file contents and returns as a string
@@ -146,11 +162,12 @@ public class Github {
         return result;
     }
 
-    public static void updateIndex(String sha1, String fileName) {
+    public static void updateIndex(String sha1, String fileName) throws FileNotFoundException {
         File index = new File("./git/index");
         String toWrite = sha1 + " " + fileName;
         fileWriter(toWrite, index);
     }
+       
 }
 
 /* QUESTIONS
