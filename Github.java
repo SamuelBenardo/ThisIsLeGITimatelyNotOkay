@@ -7,9 +7,11 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Formatter;
-
 public class Github {
+    public static boolean isCompressed;
+
     public static void main(String[] args) throws IOException {
+
     }
 
     // Creates the directories required for the github
@@ -62,6 +64,35 @@ public class Github {
         return files;
     }
 
+    // takes a file and maps it to a SHA1 file in the object dir
+    public static void createBLOBfile(File f) {
+        String dir = "./git/objects/";
+        String contents = readFileContent(f);
+        String hash = hashFile(contents);
+        File blob = new File(dir + hash);
+
+        if ((new File(dir)).exists() && !blob.exists()) {
+            try {
+                blob.createNewFile();
+                transferContents(contents, blob);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    private static void transferContents(String contents, File nFile) {
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(nFile));
+            bw.write(contents);
+            bw.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
 
     // reads the file contents and returns as a string
     public static String readFileContent(File f) {
@@ -70,6 +101,10 @@ public class Github {
             BufferedReader br = new BufferedReader(new FileReader(f));
             while (br.ready()) {
                 sb.append(br.readLine());
+            }
+            br.close();
+            if (isCompressed) {
+                return compress(sb.toString());
             }
             return sb.toString();
 
@@ -80,7 +115,7 @@ public class Github {
     }
 
     // hashes the given contents into sha-1
-    private static String hashFile(String contents) {
+    public static String hashFile(String contents) {
         String sha1 = "";
         try {
             MessageDigest crypt = MessageDigest.getInstance("SHA-1");
@@ -105,5 +140,18 @@ public class Github {
         String result = formatter.toString();
         formatter.close();
         return result;
+    }
+
+    // compresses given string
+    public static String compress(String str) throws IOException {
+        if (str == null || str.length() == 0) {
+            return str;
+        }
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        GZIPOutputStream gzip = new GZIPOutputStream(out);
+        gzip.write(str.getBytes());
+        gzip.close();
+        return out.toString("ISO-8859-1");
     }
 }

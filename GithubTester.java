@@ -69,4 +69,54 @@ public class GithubTester {
         }
     }
 
+
+
+
+
+    // BLOB
+
+    // creates a blob using file data input, returns true if worked and false if not. resets Blob file after.
+    public static boolean doesFileBLOB(File f) {
+        if (!f.exists() ) {
+            Github.createBLOBfile(f);
+
+            String dir = "./git/objects/";
+            String contents = Github.readFileContent(f);
+            String hash = Github.hashFile(contents);
+            File blob = new File(dir + hash);
+
+            if (blob.exists()) {
+                resetBlob();
+                return true;
+            } else {
+                resetBlob();
+                return false;
+            }
+        }
+        System.out.println("File already exists in Blob. Please reset.");
+        return false;
+
+    }  
+
+    public static void resetBlob() {
+
+        // reset index
+        File index = new File("./git/index");
+        if (index.exists()) {
+            if (index.delete()) {
+                try {
+                    index.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        // reset BLOB files
+        File objs = new File("./git/objects");
+        if (objs.exists()) {
+            deleteAllFiles(objs);
+        }
+    }
+
 }
