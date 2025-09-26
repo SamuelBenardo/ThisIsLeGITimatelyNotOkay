@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public class GithubTester {
     public static void main(String[] args) throws IOException {
-        testIndexing();
+        deleteTestFiles();
     }
 
     // tests if the directory exists
@@ -144,8 +144,25 @@ public class GithubTester {
 
     }
 
+    // deletes non-essential files in git folder (not within objs)
     public static void deleteTestFiles() {
-        ArrayList<String> basicGitDirs = new ArrayList<String>();
+        String dir = "./git";
+        ArrayList<String> basicGitDirs = new ArrayList<>(3);
+        basicGitDirs.add("objects");
+        basicGitDirs.add("HEAD");
+        basicGitDirs.add("index");
+        String[] currentFiles = (new File(dir)).list();
+
+        for (String file : currentFiles) {
+            if (!basicGitDirs.contains(file)) {
+                (new File(dir + "/" + file)).delete();
+            }
+        }
+    }
+
+    public static void resetToMyStandardsAKABareMinimum() {
+        resetBlob();
+        deleteTestFiles();
     }
 
 }
