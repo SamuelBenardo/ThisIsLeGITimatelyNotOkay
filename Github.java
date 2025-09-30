@@ -91,7 +91,7 @@ public class Github {
 
     public static void fileWriter(String toWrite, File f) {
         try {
-            BufferedWriter bw = new BufferedWriter(new FileWriter(f));
+            BufferedWriter bw = new BufferedWriter(new FileWriter(f, true));
             if (!isEmpty(f)) {
                 bw.newLine();
             }

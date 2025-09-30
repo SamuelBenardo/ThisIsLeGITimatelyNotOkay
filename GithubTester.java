@@ -6,8 +6,10 @@ import java.util.ArrayList;
 import java.io.Serializable;
 
 public class GithubTester {
-    public static void main(String[] args) {
-
+    public static void main(String[] args) throws IOException {
+        resetDirectories();
+        Github.initializeDirs();
+        testIndexing();
     }
 
 
@@ -154,8 +156,8 @@ public class GithubTester {
         while (br.ready()) {
             for (int i = 0; i < 4; i++) {
                 String index = br.readLine();
-                String fileName = index.substring((index.length() - 7));
-                String hash = index.substring(0, index.length() - 6);
+                String fileName = index.substring((index.length() - 6));
+                String hash = index.substring(0, index.length() - 7);
                 System.out.println(files[i] + ":");
                 System.out.println("SHA-1: " + hash.equals(sha1[i]));
                 System.out.println("File Name: " + fileName.equals(files[i]));
