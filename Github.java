@@ -5,11 +5,13 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.zip.GZIPOutputStream;
 import java.util.Formatter;
 
 public class Github {
@@ -72,14 +74,14 @@ public class Github {
     // takes a file and maps it to a SHA1 file in the object dir
     public static void createBLOBfile(File f) {
         String dir = "./git/objects/";
-        String contents = readFileContent(f);
+        String contents = readFile(f);
         String hash = hashFile(contents);
         File blob = new File(dir + hash);
 
         if ((new File(dir)).exists() && !blob.exists()) {
             try {
                 blob.createNewFile();
-                transferContents(contents, blob);
+                fileWriter(contents, blob);
             } catch (IOException e) {
                 e.printStackTrace();
             }

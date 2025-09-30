@@ -84,7 +84,7 @@ public class GithubTester {
             Github.createBLOBfile(f);
 
             String dir = "./git/objects/";
-            String contents = Github.readFileContent(f);
+            String contents = Github.readFile(f);
             String hash = Github.hashFile(contents);
             File blob = new File(dir + hash);
 
