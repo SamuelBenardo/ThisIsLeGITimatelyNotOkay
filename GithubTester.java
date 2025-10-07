@@ -10,10 +10,7 @@ public class GithubTester {
         resetDirectories();
         Github.initializeDirs();
         testIndexing();
-        //read
     }
-
-
 
     // DIRECTORY TESTERS
 
@@ -28,8 +25,8 @@ public class GithubTester {
             conclusion = conclusion && files[i].exists();
         }
 
-        
-        System.out.println("~ Existing Directories ~\nGit: " + doesExist[0] + "\nObjects: " + doesExist[1] + "\nIndex: " + doesExist[2] + "\nHead: " + doesExist[3]);
+        System.out.println("~ Existing Directories ~\nGit: " + doesExist[0] + "\nObjects: " + doesExist[1] + "\nIndex: "
+                + doesExist[2] + "\nHead: " + doesExist[3]);
 
         return conclusion;
     }
@@ -76,14 +73,12 @@ public class GithubTester {
         }
     }
 
-
-
-
     // BLOB
 
-    // creates a blob using file data input, returns true if worked and false if not. resets Blob file after.
+    // creates a blob using file data input, returns true if worked and false if
+    // not. resets Blob file after.
     public static boolean doesFileBLOB(File f) {
-        if (!f.exists() ) {
+        if (!f.exists()) {
             Github.createBLOBfile(f);
 
             String dir = "./git/objects/";
@@ -102,7 +97,7 @@ public class GithubTester {
         System.out.println("File already exists in Blob. Please reset.");
         return false;
 
-    }  
+    }
 
     public static void resetBlob() {
 
@@ -125,17 +120,19 @@ public class GithubTester {
         }
     }
 
-
     // INDEX
 
-    // creates 4 files & checks if the blobbing works correctly and the indexing works (using the noncompressed version of SHA1)
+    // creates 4 files & checks if the blobbing works correctly and the indexing
+    // works (using the noncompressed version of SHA1)
     public static void testIndexing() throws IOException {
 
         // creating test files
         String dir = "./git/";
-        String[] files = new String[]{"f1.txt", "f2.txt", "f3.txt", "f4.txt"};
-        String[] contents = new String[]{"eeny", "meeny", "miny", "moe"};
-        String[] sha1 = new String[]{"4140d3efad5acc01cc34b58ee88fc6c21568262d", "42a9a4ef58698cb708e9fefba06bd49ad02e05e1", "03516b717bbb8ca16a73ec06f236d0bc7d4120cb", "63e885ca488b7659504b5878d017e2a196f4475e"};
+        String[] files = new String[] { "f1.txt", "f2.txt", "f3.txt", "f4.txt" };
+        String[] contents = new String[] { "eeny", "meeny", "miny", "moe" };
+        String[] sha1 = new String[] { "4140d3efad5acc01cc34b58ee88fc6c21568262d",
+                "42a9a4ef58698cb708e9fefba06bd49ad02e05e1", "03516b717bbb8ca16a73ec06f236d0bc7d4120cb",
+                "63e885ca488b7659504b5878d017e2a196f4475e" };
 
         for (int i = 0; i < 4; i++) {
             File f = new File(dir + files[i]);
@@ -166,7 +163,6 @@ public class GithubTester {
             }
         }
         br.close();
-
 
     }
 
