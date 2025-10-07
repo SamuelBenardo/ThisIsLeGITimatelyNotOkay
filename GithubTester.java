@@ -10,6 +10,7 @@ public class GithubTester {
         resetDirectories();
         Github.initializeDirs();
         testIndexing();
+        //read
     }
 
 
