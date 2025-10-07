@@ -190,10 +190,14 @@ public class Github {
 
     public static String hashIndexFile() throws IOException {
         String contents = readFile("./git/index");
-        hashFile(contents);
+        return hashFile(contents);
+    }
+
+    public static String[] createArrayOfAllFilessEntryToIndex() {
+        String[] pathNames
     }
 
     public static void updateIndexFromLeaf() throws IOException {
-        
+
     }
 }
