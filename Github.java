@@ -174,9 +174,26 @@ public class Github {
     }
 
     public static void updateIndex(String sha1, String fileName) throws FileNotFoundException {
+        File file = new File(fileName);
         File index = new File("./git/index");
-        String toWrite = sha1 + " " + (new File(fileName)).getPath();
+        String toWrite = sha1 + " " + getPathStartingFromWorkingDir(file);
         fileWriter(toWrite, index);
     }
 
+    public static String getPathStartingFromWorkingDir(File file) throws IOException {
+        String pathFromWorkingDir = file.getPath();
+        while (!file.getParent().equals("ThisIsLeGITimatelyNotOkay")) {
+            pathFromWorkingDir = file.getParent() + "/" + pathFromWorkingDir;
+        }
+        return pathFromWorkingDir;
+    }
+
+    public static String hashIndexFile() throws IOException {
+        String contents = readFile("./git/index");
+        hashFile(contents);
+    }
+
+    public static void updateIndexFromLeaf() throws IOException {
+        
+    }
 }
