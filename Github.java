@@ -173,10 +173,10 @@ public class Github {
         return out.toString("ISO-8859-1");
     }
 
-    public static void updateIndex(String sha1, String fileName) throws FileNotFoundException {
+    public static void updateIndex(String sha1, String fileName) throws IOException, FileNotFoundException {
         File file = new File(fileName);
         File index = new File("./git/index");
-        String toWrite = sha1 + " " + getPathStartingFromWorkingDir(file);
+        String toWrite = "blob " + sha1 + " " + file.getPath();
         fileWriter(toWrite, index);
     }
 
@@ -189,12 +189,14 @@ public class Github {
     }
 
     public static String hashIndexFile() throws IOException {
-        String contents = readFile("./git/index");
+        File file = new File("./git/index");
+        String contents = readFile(file);
         return hashFile(contents);
     }
 
-    public static String[] createArrayOfAllFilessEntryToIndex() {
-        String[] pathNames
+    public static String[] createArrayOfAllFilessEntryToIndex() throws IOException{
+        String[] pathNames = new String[3];
+        return pathNames;
     }
 
     public static void updateIndexFromLeaf() throws IOException {
