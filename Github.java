@@ -9,17 +9,17 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.file.Files;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.zip.GZIPOutputStream;
 import java.util.Formatter;
+import java.nio.file.*;
+import java.util.*;
 
 public class Github {
     public static boolean isCompressed;
-
-    public static void main(String[] args) throws IOException {
-
-    }
+    public static ArrayList<fileInformationObject> fileInformationObjects;
 
     // Creates the directories required for the github
     public static void initializeDirs() throws IOException {
@@ -173,31 +173,119 @@ public class Github {
         return out.toString("ISO-8859-1");
     }
 
-    public static void updateIndex(String sha1, String fileName) throws FileNotFoundException {
+    public static void updateIndex(String sha1, String fileName) throws IOException, FileNotFoundException {
         File file = new File(fileName);
         File index = new File("./git/index");
-        String toWrite = sha1 + " " + getPathStartingFromWorkingDir(file);
+        String toWrite = "blob " + sha1 + " " + file.getPath();
         fileWriter(toWrite, index);
     }
 
-    public static String getPathStartingFromWorkingDir(File file) throws IOException {
-        String pathFromWorkingDir = file.getPath();
-        while (!file.getParent().equals("ThisIsLeGITimatelyNotOkay")) {
-            pathFromWorkingDir = file.getParent() + "/" + pathFromWorkingDir;
+    public static void storeFileSystemInObjects() throws IOException {
+        initializeWorkingList();
+        createTrees();
+    }
+
+    public static void initializeWorkingList() throws IOException {
+        Path indexPath = Paths.get("git/index");
+        Path workingListPath = Paths.get("git/objects/workingList");
+        Files.copy(indexPath, workingListPath);
+        sortWorkingList();
+    }
+
+    public static void sortWorkingList() throws IOException {
+        createArrayListOfFileInformationObjects();
+        sortArrayListOfFileInformationObjects();
+        createSortedWorkingListOffOfArrayListOfFileInformationObjects();
+    }
+
+    public static void sortArrayListOfFileInformationObjects() throws IOException {
+        fileInformationObjects.sort(
+                Comparator.comparingInt(fileInformationObject::getfileDepth)
+                        .reversed()
+                        .thenComparing(fileInformationObject::getfileParentName));
+    }
+
+    public static void createArrayListOfFileInformationObjects() throws IOException {
+        ArrayList<fileInformationObject> unsortedFileInformationObjects = new ArrayList<>();
+        BufferedReader workingListReader = new BufferedReader(new FileReader("git/objects/workingList"));
+        while (workingListReader.ready()) {
+            String fileEntryLineInIndex = workingListReader.readLine();
+            fileInformationObject fileInformationObject = new fileInformationObject(fileEntryLineInIndex);
+            unsortedFileInformationObjects.add(fileInformationObject);
         }
-        return pathFromWorkingDir;
+        workingListReader.close();
+        fileInformationObjects = unsortedFileInformationObjects;
+    }
+
+    public static void createSortedWorkingListOffOfArrayListOfFileInformationObjects() throws IOException {
+        File workingList = new File("git/objects/workingList");
+        workingList.delete();
+        StringBuilder workingListContents = new StringBuilder();
+        for (fileInformationObject fileInformationObject : fileInformationObjects) {
+            String fileEntryLineInIndex = fileInformationObject.getfileEntryLineInIndex();
+            workingListContents.append(fileEntryLineInIndex);
+            workingListContents.append("\n");
+        }
+        BufferedWriter workingListWriter = new BufferedWriter(new FileWriter("git/objects/workingList"));
+        String workingListContentsString = workingListContents.toString();
+        workingListContentsString.trim();
+        workingListWriter.write(workingListContentsString);
+        workingListWriter.close();
+    }
+
+    public static void createTrees() throws IOException {
+        while (fileInformationObjects.size() > 1) {
+            createTree();
+        }
+        // !fileInformationObjects.get(0).getfileParentName().equals(".")
+    }
+
+    public static void createTree() throws IOException {
+        boolean isLastTreeCreated = false;
+        fileInformationObject firstFile = fileInformationObjects.get(0);
+        String firstFileParentName = firstFile.getfileParentName();
+        String firstFileParentPath = firstFile.getfileParentPath();
+        int firstFileDepth = firstFile.getfileDepth();
+
+        StringBuilder newTreeContents = new StringBuilder();
+        String firstFileEntryLineIntoIndex = firstFile.getfileEntryLineInIndex();
+        newTreeContents.append(firstFileEntryLineIntoIndex);
+        fileInformationObjects.remove(0);
+
+        fileInformationObject nextFile = fileInformationObjects.get(0);
+        String nextFileParentName = nextFile.getfileParentName();
+        int nextFileDepth = nextFile.getfileDepth();
+
+        while (!isLastTreeCreated && nextFileParentName.equals(firstFileParentName) && nextFileDepth == firstFileDepth) {
+            newTreeContents.append("\n");
+            newTreeContents.append(nextFile.getfileEntryLineInIndex());
+            fileInformationObjects.remove(0);
+            if (!fileInformationObjects.isEmpty()) {
+                nextFile = fileInformationObjects.get(0);
+                nextFileParentName = nextFile.getfileParentName();
+                nextFileDepth = nextFile.getfileDepth();
+            } else {
+                isLastTreeCreated = true;
+            }
+        }
+        String newTreeContentsString = newTreeContents.toString();
+        String treeFileInformationObjectHash = hashFile(newTreeContentsString);
+        String newTreeEntryLine = "tree " + treeFileInformationObjectHash + " " + firstFileParentPath;
+        fileInformationObject newTreeFileInformationObject = new fileInformationObject(newTreeEntryLine,
+                firstFileDepth - 1);
+        fileInformationObjects.add(0, newTreeFileInformationObject);
+        File newTree = new File("git/objects/" + treeFileInformationObjectHash);
+        newTree.createNewFile();
+        FileWriter newTreeWriter = new FileWriter(newTree);
+        newTreeWriter.write(newTreeContentsString);
+        newTreeWriter.close();
+        sortArrayListOfFileInformationObjects();
+        createSortedWorkingListOffOfArrayListOfFileInformationObjects();
     }
 
     public static String hashIndexFile() throws IOException {
-        String contents = readFile("./git/index");
+        File file = new File("./git/index");
+        String contents = readFile(file);
         return hashFile(contents);
-    }
-
-    public static String[] createArrayOfAllFilessEntryToIndex() {
-        String[] pathNames
-    }
-
-    public static void updateIndexFromLeaf() throws IOException {
-
     }
 }

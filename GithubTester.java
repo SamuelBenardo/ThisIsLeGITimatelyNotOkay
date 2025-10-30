@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.io.Serializable;
@@ -9,7 +10,9 @@ public class GithubTester {
     public static void main(String[] args) throws IOException {
         resetDirectories();
         Github.initializeDirs();
-        testIndexing();
+        // testIndexing();
+        makeFileSystemAndUpdateIndex();
+        Github.storeFileSystemInObjects();
     }
 
     // DIRECTORY TESTERS
@@ -164,6 +167,76 @@ public class GithubTester {
         }
         br.close();
 
+    }
+
+    public static void makeFileSystemAndUpdateIndex() throws IOException {
+        File dir1 = new File("dir1");
+        dir1.mkdir();
+
+        File f1 = new File("dir1/f1.txt");
+        f1.createNewFile();
+        FileWriter f1writer = new FileWriter(f1);
+        String f1Contents = "kashj;kja";
+        f1writer.write(f1Contents);
+        f1writer.close();
+        String f1Hash = Github.hashFile(f1Contents);
+        
+        File dir2 = new File("dir1/dir2");
+        dir2.mkdir();
+
+        File f2 = new File("dir1/dir2/f2.txt");
+        f2.createNewFile();
+        FileWriter f2writer = new FileWriter(f2);
+        String f2Contents = "uyou";
+        f2writer.write(f2Contents);
+        f2writer.close();
+        String f2Hash = Github.hashFile(f2Contents);
+
+        File f3 = new File("dir1/dir2/f3.txt");
+        f3.createNewFile();
+        FileWriter f3writer = new FileWriter(f3);
+        String f3Contents = "POSIUD";
+        f3writer.write(f3Contents);
+        f3writer.close();
+        String f3Hash = Github.hashFile(f3Contents);
+
+        File dir3 = new File("dir1/dir3");
+        dir3.mkdir();
+
+        File f4 = new File("dir1/dir3/f4.txt");
+        f4.createNewFile();
+        FileWriter f4writer = new FileWriter(f4);
+        String f4Contents = "egwwef";
+        f4writer.write(f4Contents);
+        f4writer.close();
+        String f4Hash = Github.hashFile(f4Contents);
+
+        File f5 = new File("dir1/dir3/f5.txt");
+        f5.createNewFile();
+        FileWriter f5writer = new FileWriter(f5);
+        String f5Contents = "oieoreor";
+        f5writer.write(f5Contents);
+        f5writer.close();
+        String f5Hash = Github.hashFile(f5Contents);
+
+        File dir4 = new File("dir1/dir3/dir4");
+        dir4.mkdir();
+
+        File f6 = new File("dir1/dir3/dir4/f6.txt");
+        f6.createNewFile();
+        FileWriter f6writer = new FileWriter(f6);
+        String f6Contents = "lgoi";
+        f6writer.write(f6Contents);
+        f6writer.close();
+        String f6Hash = Github.hashFile(f6Contents);
+
+        Github.updateIndex(f3Hash, "dir1/dir2/f3.txt");
+        Github.updateIndex(f1Hash, "dir1/f1.txt");
+        Github.updateIndex(f4Hash, "dir1/dir3/f4.txt");
+        Github.updateIndex(f2Hash, "dir1/dir2/f2.txt");
+        Github.updateIndex(f6Hash, "dir1/dir3/dir4/f6.txt");
+        Github.updateIndex(f5Hash, "dir1/dir3/f5.txt");
+    
     }
 
     // deletes non-essential files in git folder (not within objs)
