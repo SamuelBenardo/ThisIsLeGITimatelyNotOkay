@@ -182,7 +182,17 @@ public class Github {
 
     public static void storeFileSystemInObjects() throws IOException {
         initializeWorkingList();
+        if (fileInformationObjects.isEmpty()) {
+            handleEdgeCaseWhereThereAreNoFiles();
+            return;
+        }
         createTrees();
+    }
+
+    public static void handleEdgeCaseWhereThereAreNoFiles() throws IOException {
+        String hashOfEmptyString = hashFile("");
+        File rootTree = new File("git/objects/" + hashOfEmptyString);
+        rootTree.createNewFile();
     }
 
     public static void initializeWorkingList() throws IOException {
