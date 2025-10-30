@@ -11,7 +11,8 @@ public class GithubTester {
         resetDirectories();
         Github.initializeDirs();
         // testIndexing();
-        testTreeCreation();
+        makeFileSystemAndUpdateIndex();
+        Github.storeFileSystemInObjects();
     }
 
     // DIRECTORY TESTERS
@@ -168,13 +169,7 @@ public class GithubTester {
 
     }
 
-    public static void testTreeCreation() throws IOException {
-        makeDirectorySystemAndUpdateIndex();
-        Github.createTree("dir1");
-
-    }
-
-    public static void makeDirectorySystemAndUpdateIndex() throws IOException {
+    public static void makeFileSystemAndUpdateIndex() throws IOException {
         File dir1 = new File("dir1");
         dir1.mkdir();
 
