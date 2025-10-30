@@ -173,10 +173,18 @@ public class Github {
         return out.toString("ISO-8859-1");
     }
 
-    public static void updateIndex(String sha1, String fileName) throws IOException, FileNotFoundException {
-        File file = new File(fileName);
+    public static void updateIndex(String sha1, String filePath) throws FileNotFoundException {
+        File file = new File(filePath);
+        if (!file.exists()) {
+            System.out.println("tried to store non-existant file in index, action not carried out");
+            return;
+        }
+        if (file.isDirectory()) {
+            System.out.println("tried to store directory in index, action not carried out");
+            return;
+        }
         File index = new File("./git/index");
-        String toWrite = "blob " + sha1 + " " + file.getPath();
+        String toWrite = sha1 + " " + (new File(filePath)).getPath();
         fileWriter(toWrite, index);
     }
 
