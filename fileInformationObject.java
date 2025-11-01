@@ -2,6 +2,7 @@ public class fileInformationObject {
 
     private int fileDepth;
     private String fileEntryLineInIndex;
+    private String fileEntryLineInATreeInObjects;
     private String fileParentName;
     private String fileParentPath;
 
@@ -10,6 +11,7 @@ public class fileInformationObject {
         this.fileDepth = findFileDepth(fileEntryLineInIndex);
         this.fileParentPath = findFileParentPath();
         this.fileParentName = findFileParentName();
+        this.fileEntryLineInATreeInObjects = findFileEntryLineInATreeInObjects();
     }
 
     public fileInformationObject(String fileEntryLineInIndex, int fileDepth) {
@@ -17,6 +19,7 @@ public class fileInformationObject {
         this.fileDepth = fileDepth;
         this.fileParentPath = findFileParentPath();
         this.fileParentName = findFileParentName();
+        this.fileEntryLineInATreeInObjects = findFileEntryLineInATreeInObjects();
     }
 
     public int getfileDepth() {
@@ -35,6 +38,10 @@ public class fileInformationObject {
 
     public String getfileEntryLineInIndex() {
         return fileEntryLineInIndex;
+    }
+
+    public String getfileEntryLineInATreeInObjects() {
+        return fileEntryLineInATreeInObjects;
     }
 
     public String getfileParentName() {
@@ -69,4 +76,11 @@ public class fileInformationObject {
         return fileParentName;
     }
 
+    public String findFileEntryLineInATreeInObjects() {
+        int indexOfSecondSpace = fileEntryLineInIndex.lastIndexOf(' ');
+        int indexOfLastSlash = fileEntryLineInIndex.lastIndexOf('\\');
+        String fileName = fileEntryLineInIndex.substring(indexOfLastSlash + 1);
+        String fileEntryLineInATreeInObjects = fileEntryLineInIndex.substring(0, indexOfSecondSpace) + " " + fileName;
+        return fileEntryLineInATreeInObjects;
+    }
 }

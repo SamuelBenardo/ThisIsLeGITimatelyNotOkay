@@ -184,7 +184,7 @@ public class Github {
             return;
         }
         File index = new File("./git/index");
-        String toWrite = sha1 + " " + (new File(filePath)).getPath();
+        String toWrite = sha1 + " " + file.getPath();
         fileWriter(toWrite, index);
     }
 
@@ -204,9 +204,19 @@ public class Github {
     }
 
     public static void initializeWorkingList() throws IOException {
-        Path indexPath = Paths.get("git/index");
-        Path workingListPath = Paths.get("git/objects/workingList");
-        Files.copy(indexPath, workingListPath);
+        File workingList = new File("git/objects/workingList");
+        FileWriter workingListWriter = new FileWriter(workingList, true);
+        File index = new File("git/index");
+        BufferedReader indexReader = new BufferedReader(new FileReader(index));
+        while (indexReader.ready()) {
+            String fileEntryLineInIndex = indexReader.readLine();
+            String fileEntryLineInWorkingList = "blob " + fileEntryLineInIndex;
+            workingListWriter.write(fileEntryLineInWorkingList);
+            if (indexReader.ready()) {
+                workingListWriter.write("\n");
+            }
+        }
+        workingListWriter.close();
         sortWorkingList();
     }
 
@@ -255,7 +265,6 @@ public class Github {
         while (fileInformationObjects.size() > 1) {
             createTree();
         }
-        // !fileInformationObjects.get(0).getfileParentName().equals(".")
     }
 
     public static void createTree() throws IOException {
@@ -266,17 +275,18 @@ public class Github {
         int firstFileDepth = firstFile.getfileDepth();
 
         StringBuilder newTreeContents = new StringBuilder();
-        String firstFileEntryLineIntoIndex = firstFile.getfileEntryLineInIndex();
-        newTreeContents.append(firstFileEntryLineIntoIndex);
+        String firstFileEntryLineInATreeInObjects = firstFile.getfileEntryLineInATreeInObjects();
+        newTreeContents.append(firstFileEntryLineInATreeInObjects);
         fileInformationObjects.remove(0);
 
         fileInformationObject nextFile = fileInformationObjects.get(0);
         String nextFileParentName = nextFile.getfileParentName();
         int nextFileDepth = nextFile.getfileDepth();
 
-        while (!isLastTreeCreated && nextFileParentName.equals(firstFileParentName) && nextFileDepth == firstFileDepth) {
+        while (!isLastTreeCreated && nextFileParentName.equals(firstFileParentName)
+                && nextFileDepth == firstFileDepth) {
             newTreeContents.append("\n");
-            newTreeContents.append(nextFile.getfileEntryLineInIndex());
+            newTreeContents.append(nextFile.getfileEntryLineInATreeInObjects());
             fileInformationObjects.remove(0);
             if (!fileInformationObjects.isEmpty()) {
                 nextFile = fileInformationObjects.get(0);

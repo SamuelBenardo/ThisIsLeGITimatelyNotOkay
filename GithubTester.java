@@ -180,7 +180,7 @@ public class GithubTester {
         f1writer.write(f1Contents);
         f1writer.close();
         String f1Hash = Github.hashFile(f1Contents);
-        
+
         File dir2 = new File("dir1/dir2");
         dir2.mkdir();
 
@@ -230,13 +230,19 @@ public class GithubTester {
         f6writer.close();
         String f6Hash = Github.hashFile(f6Contents);
 
+        Github.createBLOBfile(f1);
+        Github.createBLOBfile(f2);
+        Github.createBLOBfile(f3);
+        Github.createBLOBfile(f4);
+        Github.createBLOBfile(f5);
+        Github.createBLOBfile(f6);
         Github.updateIndex(f3Hash, "dir1/dir2/f3.txt");
         Github.updateIndex(f1Hash, "dir1/f1.txt");
         Github.updateIndex(f4Hash, "dir1/dir3/f4.txt");
         Github.updateIndex(f2Hash, "dir1/dir2/f2.txt");
         Github.updateIndex(f6Hash, "dir1/dir3/dir4/f6.txt");
         Github.updateIndex(f5Hash, "dir1/dir3/f5.txt");
-    
+
     }
 
     // deletes non-essential files in git folder (not within objs)
